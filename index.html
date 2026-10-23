@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quadro Elétrico Fácil — Simulador Interativo</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e6ebef;--fg:#14202b;--card:#fff;--mut:#5a6874;--bd:#c5cfd8;--ac:#0b5cff;--ok:#12805c;--er:#c2362b;--rail:#7f8e9a;--mod:#f7f9fa;--hi:#e8a200;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181f;--fg:#e8eef3;--card:#1a252e;--mut:#9aa9b5;--bd:#33424e;--ac:#5b8dff;--ok:#3ec99a;--er:#ff7b6e;--rail:#4b5b68;--mod:#243340;--hi:#f0b429;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10181f;--fg:#e8eef3;--card:#1a252e;--mut:#9aa9b5;--bd:#33424e;--ac:#5b8dff;--ok:#3ec99a;--er:#ff7b6e;--rail:#4b5b68;--mod:#243340;--hi:#f0b429;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.45 Barlow,system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+main{max-width:560px;margin:0 auto;padding:0 12px 28px}
+h1,h2{font-family:"Barlow Condensed",Impact,sans-serif;margin:.2em 0;line-height:1.1}h2{font-size:1.5rem}
+button{font:inherit;color:var(--fg);cursor:pointer}button:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 0 6px}
+.bar{height:8px;background:var(--bd);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);transition:width .5s}
+.st{display:flex;justify-content:space-between;font-size:.9rem;color:var(--mut);margin:4px 0}
+.q{display:flex;gap:10px;background:var(--card);border:2px solid var(--bd);border-radius:10px;padding:12px;font-size:1.05rem}.q span{font-size:2rem;line-height:1}
+.fb{margin-top:8px;padding:10px 12px;border-radius:8px;border-left:6px solid;background:var(--card);animation:pop .3s}
+.fb.o{border-color:var(--ok)}.fb.e{border-color:var(--er)}
+.pn{background:var(--card);border:3px solid var(--bd);border-radius:10px;padding:10px;margin:10px 0}
+.pn.bad{animation:flash .5s}
+.rail{display:flex;gap:5px;background:var(--rail);padding:8px;border-radius:5px;margin-bottom:6px;justify-content:center}
+.col{display:flex;flex-direction:column;gap:4px;flex:1;max-width:96px}
+.sl{min-height:58px;flex:1;border:2px dashed #fff9;border-radius:4px;font-size:.72rem;line-height:1.15;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;padding:2px}
+.sl.f{border:1px solid var(--bd);background:var(--mod);color:var(--fg);font-size:.82rem;animation:pop .4s}
+.sl.g{background:#c2362b;color:#fff}.sl.dps{background:#e0a800;color:#111}.sl.idr{background:#0b5cff;color:#fff}
+.sl.tgt{border-color:var(--hi);animation:glow 1s infinite}
+.sl.on::after{content:"";width:9px;height:9px;border-radius:50%;background:#3ddc84;box-shadow:0 0 8px #3ddc84;margin-top:3px}
+.sl b{font:700 1.1rem "Barlow Condensed",sans-serif}
+.lb{font-size:.72rem;color:#fff;text-align:center;margin:0}
+.bars{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.bars .sl{background:var(--mod);color:var(--mut);border-color:var(--mut);min-height:48px}
+.sw{display:inline-block;width:26px;height:14px;border-radius:3px;border:1px solid #0006}
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cd{background:var(--card);border:2px solid var(--bd);border-radius:10px;padding:12px 8px;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;font-weight:600;transition:transform .1s}
+.cd:active{transform:scale(.95)}.cd .ic{font-size:1.8rem;line-height:1}
+.cd.g{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card))}
+.cd.b{border-color:var(--er);opacity:.55;animation:shake .4s}
+.cd:disabled{cursor:default}
+.bench.one{grid-template-columns:1fr}
+.go{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:14px;font-weight:600;width:100%;margin-top:12px;min-height:50px;animation:glow2 1.2s infinite}
+.house{display:flex;justify-content:space-around;background:var(--card);border:2px solid var(--bd);border-radius:10px;padding:12px 4px;margin:10px 0;font-size:2rem}
+.house span{filter:grayscale(1) brightness(.5);opacity:.5;transition:all .5s}.house.lit span{filter:none;opacity:1;text-shadow:0 0 14px #ffd54a}
+.house.lit span:nth-child(2){transition-delay:.3s}.house.lit span:nth-child(3){transition-delay:.6s}.house.lit span:nth-child(4){transition-delay:.9s}.house.lit span:nth-child(5){transition-delay:1.2s}
+.house.off span{filter:grayscale(1) brightness(.4);opacity:.4;text-shadow:none;transition:all .2s;transition-delay:0s!important}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-top:10px}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes flash{0%,60%{border-color:var(--er);box-shadow:0 0 14px var(--er)}100%{border-color:var(--bd)}}
+@keyframes glow{50%{box-shadow:0 0 12px 2px var(--hi)}}
+@keyframes glow2{50%{box-shadow:0 0 14px var(--ac)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+.header{max-width:560px;margin:auto;padding:18px 14px 8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font:700 1.5rem "Barlow Condensed",sans-serif;letter-spacing:.3px}.brand small{display:block;font:500 .72rem Barlow,sans-serif;color:var(--mut)}
+.tools{display:flex;gap:6px}.tools button{border:1px solid var(--bd);border-radius:9px;background:var(--card);padding:8px 10px;font-size:.85rem}
+.intro{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin:12px 0}.intro h1{font-size:2rem;margin:0 0 8px}.intro p{color:var(--mut)}
+.note{background:color-mix(in srgb,var(--hi) 10%,var(--card));border-left:4px solid var(--hi);padding:10px 12px;border-radius:7px;font-size:.86rem;margin:12px 0}
+.go:disabled{opacity:.5}.footer{max-width:560px;margin:0 auto;padding:4px 14px 22px;color:var(--mut);font-size:.75rem}
+@media(max-width:390px){.rail{gap:3px;padding:5px}.sl{font-size:.66rem;min-height:50px}.col{min-width:0}.q{font-size:.95rem}}
+
+/* Painel didático inspirado em componentes DIN reais, sem marcas comerciais */
+.pn{background:linear-gradient(145deg,#d9e0e5,#aebbc6);border:5px solid #788995;box-shadow:inset 0 2px 8px #39495555,0 8px 22px #0002;padding:12px 8px}
+.pn:before{content:"QUADRO DE DISTRIBUIÇÃO  •  VISÃO FRONTAL DIDÁTICA";display:block;text-align:center;font:700 10px Barlow,sans-serif;letter-spacing:.08em;color:#263845;margin-bottom:9px}
+.rail{background:linear-gradient(#667581 0 12%,#c8d0d6 12% 20%,#8897a2 20% 82%,#d6dce0 82% 90%,#667581 90%);border:1px solid #596b78;align-items:stretch;min-height:112px;padding:10px 5px;gap:4px}
+.sl{position:relative;min-width:0;min-height:84px;border:2px dashed #ffffffa6;border-radius:4px;overflow:hidden;overflow-wrap:anywhere}
+.sl.device{background:linear-gradient(90deg,#d8dee2,#fff 22%,#f2f5f6 76%,#bdc8cf);border:1px solid #788793;color:#1c2a33;box-shadow:2px 2px 3px #0004;justify-content:flex-start;padding:5px 2px 3px;gap:3px}
+.sl.device:before{content:"DIN";display:block;align-self:flex-start;font-size:8px;font-weight:700;color:#4c5962}
+.sl.device .devname{font-size:10px;font-weight:800;line-height:1.05;min-height:18px}
+.sl.device .lever{width:57%;height:24px;border:2px solid #6a7781;border-radius:3px;background:linear-gradient(#353e46 0 70%,#1d2329 70%);box-shadow:0 2px 2px #0004;position:relative}
+.sl.device .lever:after{content:"I";position:absolute;right:3px;top:2px;color:#e5e8eb;font-size:9px}
+.sl.device .rating{font-size:9px;font-weight:800;background:#e6ebed;border:1px solid #aab5bb;border-radius:2px;padding:1px 2px}
+.sl.device.g{border-top:6px solid #b63a34}.sl.device.dps{border-top:6px solid #e4b02d}.sl.device.idr{border-top:6px solid #3e83d1}
+.sl.device.idr .lever{background:linear-gradient(#3b80b9 0 70%,#20507c 70%)}
+.sl.device.dps .lever{height:18px;background:linear-gradient(#56ae6b 0 70%,#367347 70%)}
+.sl.device .terminals{margin-top:auto;display:flex;gap:3px}.sl.device .terminals i{display:block;width:7px;height:5px;border:1px solid #7a8790;background:#a5b0b7}
+.sl.cable{background:linear-gradient(135deg,#f2f5f7,#d8e0e5);color:#263845;border:1px solid #8799a5;min-height:56px}
+.sl.cable:before{content:"〰";font-size:19px;color:#b35b3c;line-height:1}
+.sl.cable .rating{font-weight:800;font-size:11px}
+.sl.on:after{position:absolute;top:4px;right:3px;margin:0}
+.sl.device.tgt,.sl.cable.tgt{outline:2px solid var(--hi);outline-offset:2px}
+.bars .sl{min-height:52px}
+@media(max-width:390px){.sl.device .devname{font-size:9px}.sl.device .rating{font-size:8px}.sl.device .lever{height:20px}.rail{gap:2px;padding:7px 3px}.pn{padding:8px 5px}}
+</style></head><body><header class="header"><div class="brand">⚡ QUADRO ELÉTRICO FÁCIL<small>Laboratório virtual de elétrica residencial</small></div><div class="tools"><button onclick="toggleTheme()" aria-label="Alternar tema">◐ Tema</button><button onclick="restart()">↺ Reiniciar</button></div></header><main id="g"></main><footer class="footer">Simulação educativa • Não substitui projeto elétrico, NR-10 ou verificação profissional.</footer>
+<script>
+const STD=[10,16,20,25,32,40,50,63],WR=[1,1.5,2.5,4,6,10,16],IZ={1:15,1.5:17.5,2.5:24,4:32,6:41,10:57,16:76};
+let started=false;
+function toggleTheme(){const root=document.documentElement;root.dataset.theme=root.dataset.theme==='dark'?'light':'dark'}
+function restart(){if(confirm('Reiniciar o treinamento e zerar a pontuação?')){rs();started=false;R()}}
+const F=n=>String(n).replace(".",","),f1=n=>n.toFixed(1).replace(".",","),$=s=>document.querySelector(s);
+const CI=[{n:"Iluminação",ic:"💡",s:"Ilum.",w:600,v:127,min:1.5},{n:"Tomadas da sala e quartos",ic:"🔌",s:"TUG",w:2000,v:127,min:2.5},{n:"Tomadas da cozinha",ic:"🍳",s:"Cozinha",w:3000,v:127,min:2.5},{n:"Chuveiro elétrico",ic:"🚿",s:"Chuveiro",w:5500,v:220,min:2.5},{n:"Ar-condicionado",ic:"❄️",s:"Ar",w:1500,v:220,min:2.5}];
+const SW={azul:"#3aa0ff",verde:"linear-gradient(90deg,#3c3 50%,#fd0 50%)",vermelho:"#d33",preto:"#222"};
+const sw=k=>`<i class="sw" style="background:${SW[k]}"></i>`;
+function build(){const S=[],rot=(o,k)=>o.slice(k%o.length).concat(o.slice(0,k%o.length));
+S.push({tg:"me",need:3,q:"Em uma simulação de trabalho desenergizado, selecione os 3 itens adequados. Na prática, desenergização, bloqueio e constatação de ausência de tensão exigem procedimentos da NR-10 e profissional habilitado.",o:[{n:"Luvas isoladoras",ic:"🧤",ok:1,w:"Luvas isoladoras protegem contra choque."},{n:"Óculos de proteção",ic:"🥽",ok:1,w:"Os óculos protegem contra faíscas."},{n:"Detector de tensão",ic:"🔎",ok:1,w:"Um instrumento apropriado, verificado e usado corretamente, auxilia na constatação de ausência de tensão."},{n:"Fita crepe",ic:"🩹",w:"Fita crepe não é EPI elétrico."}]});
+S.push({tg:"s0",q:"Disjuntor geral. A casa soma 12,6 kW em 220 V. Com demanda de 60%: 12 600 × 0,6 ÷ 220 ≈ 34 A.",o:[{n:"Geral 25 A",ic:"🔴",w:"25 A é menos que 34 A: desarma com a casa em uso."},{n:"Geral 40 A",ic:"🔴",ok:1,m:"<b>GERAL</b>40 A",c:"g",w:"40 A atende ao exemplo simplificado; a proteção real depende da instalação e dos critérios de projeto."},{n:"Geral 63 A",ic:"🔴",w:"63 A passa do que o cabo de 10 mm² aguenta (57 A)."}]});
+S.push({tg:"s1",q:"Agora, o que protege a casa contra raios e surtos de tensão?",o:[{n:"DPS",ic:"🟡",ok:1,m:"<b>DPS</b>",c:"dps",w:"O DPS limita sobretensões transitórias; sua ligação e proteção dependem do esquema elétrico."},{n:"Contator",ic:"🔲",w:"O contator liga e desliga cargas, não protege contra surtos."},{n:"Fusível de vidro",ic:"🧪",w:"O fusível protege contra sobrecorrente, não contra surto."}]});
+S.push({tg:"s2",q:"Qual dispositivo protege as pessoas contra choque elétrico?",o:[{n:"IDR 30 mA",ic:"🔵",ok:1,m:"<b>IDR</b>30 mA",c:"idr",w:"O DR de 30 mA fornece proteção adicional contra choques, mas não substitui outras medidas de segurança."},{n:"IDR 300 mA",ic:"🔵",w:"Um DR de 300 mA não substitui o DR de 30 mA onde se exige proteção adicional."},{n:"Disjuntor 10 A",ic:"🔘",w:"O disjuntor atua contra sobrecorrentes e pode integrar medidas de proteção contra choques, conforme o esquema de aterramento."}]});
+CI.forEach((c,i)=>{const ib=c.w/c.v,ii=STD.findIndex(x=>x>=ib),In=STD[ii],lo=STD[ii-1]||6,hi=STD[Math.min(ii+2,STD.length-1)],wi=WR.findIndex(w=>w>=c.min&&IZ[w]>=In),W=WR[wi],th=WR[Math.max(0,wi-1)];
+S.push({tg:"b"+i,q:`${c.ic} ${c.n}: ${c.w} W em ${c.v} V. Corrente: I = ${c.w} ÷ ${c.v} = ${f1(ib)} A. Escolha o disjuntor.`,o:rot([{n:lo+" A",ic:"🔘",w:`${lo} A é menos que ${f1(ib)} A: desarma à toa.`},{n:In+" A",ic:"🔘",ok:1,m:`<b>${In}A</b>`,w:`${In} A é o primeiro valor acima de ${f1(ib)} A.`},{n:hi+" A",ic:"🔘",w:`${hi} A é grande demais: o fio esquenta antes de o disjuntor desarmar.`}],i)});
+S.push({tg:"w"+i,q:`Agora o fio. Ele precisa aguentar o disjuntor de ${In} A e respeitar o mínimo da norma.`,o:rot([{n:F(th)+" mm²",ic:"➰",w:IZ[th]<In?`${F(th)} mm² aguenta só ${F(IZ[th])} A: menos que o disjuntor.`:`${F(th)} mm² é menos que o mínimo da NBR 5410 (${F(c.min)} mm²).`},{n:F(W)+" mm²",ic:"➰",ok:1,m:F(W)+" mm²",w:`${F(W)} mm² aguenta ${F(IZ[W])} A, mais que ${In} A, e cumpre o mínimo.`},{n:F(WR[Math.min(wi+2,WR.length-1)])+" mm²",ic:"➰",w:`${F(WR[Math.min(wi+2,WR.length-1)])} mm² pode atender termicamente, mas deve ser avaliado quanto a custo, terminais e demais critérios.`}],i+1)})});
+const cq=(tg,q,good,msg)=>({tg,q,o:["azul","verde","vermelho","preto"].map(k=>({n:{azul:"Azul-claro",verde:"Verde-amarelo",vermelho:"Vermelho",preto:"Preto"}[k],ic:sw(k),ok:good.includes(k)?1:0,m:sw(k),w:good.includes(k)?msg:"Não é essa cor. Neutro: azul-claro. Terra: verde ou verde-amarelo. Fase: as outras."}))});
+S.push(cq("N","Qual a cor do fio NEUTRO?",["azul"],"O neutro é sempre azul-claro."),cq("PE","Qual a cor do fio TERRA (proteção)?",["verde"],"Terra é verde ou verde-amarelo."),cq("F","Qual cor pode ser usada como FASE?",["vermelho","preto"],"Fase é vermelho, preto ou branco. Azul e verde são reservados."));
+S.push({tg:"on",q:"Tudo montado! Feche a tampa e ligue o disjuntor geral.",o:[{n:"Ligar o geral",ic:"⚡",ok:1,w:"Energizado! Todos os circuitos acesos."}]});
+S.push({tg:"t",q:"Teste final: simule uma fuga de corrente no chuveiro.",o:[{n:"Simular fuga",ic:"🚿",ok:1,w:"O DR detectou a corrente diferencial e atuou. O teste periódico deve seguir as instruções do fabricante."}]});
+return S}
+let S=build(),s=0,done=false,fb=null,pl={},pts=0,combo=0,errs=0,lit=false,trip=false,bad=false,ac;
+function bp(f,d){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+function pick(i){const st=S[s],o=st.o[i];if(done||o.x)return;o.x=1;bad=false;
+if(o.ok){o.g=1;st.got=(st.got||0)+1;
+ if(st.tg=="me")pl.me=(pl.me||"")+o.ic;else pl[st.tg]=o;
+ if(st.got>=(st.need||1)){done=true;if(!st.tr){combo++;pts+=100+combo*10}else pts+=st.tr==1?50:20;if(st.tg=="on")lit=true;if(st.tg=="t")trip=true}
+ fb={k:"o",t:o.w};bp(660,.1);setTimeout(()=>bp(880,.15),110)}
+else{o.b=1;st.tr=(st.tr||0)+1;errs++;combo=0;bad=true;fb={k:"e",t:o.w};bp(150,.3);navigator.vibrate&&navigator.vibrate(120)}
+R()}
+function nx(){s++;done=false;fb=null;bad=false;R();scrollTo(0,0)}
+function rs(){S=build();s=0;done=false;fb=null;pl={};pts=combo=errs=0;lit=trip=bad=false;R()}
+function sl(id,lb){
+const o=pl[id],t=!done&&S[s]&&S[s].tg==id;
+const installed=!!o;
+const active=lit&&id[0]=="b"&&!trip;
+const stateClass=`${t?"tgt":""} ${active?"on":""}`;
+if(installed&&(id=="s0"||id=="s1"||id=="s2"||id[0]=="b")){
+ const kind=id=="s0"?"g":id=="s1"?"dps":id=="s2"?"idr":"";
+ const name=id=="s0"?"GERAL":id=="s1"?"DPS":id=="s2"?"IDR":"DISJ.";
+ const rating=id=="s0"?"40 A":id=="s1"?"SURTO":id=="s2"?"30 mA":(o.n||"");
+ return `<div class="sl device ${kind} ${stateClass}" aria-label="${name} ${rating}"><span class="devname">${name}</span><span class="lever"></span><span class="rating">${rating}</span><span class="terminals"><i></i><i></i></span></div>`;
+}
+if(installed&&id[0]=="w")return `<div class="sl cable ${stateClass}"><span class="rating">${o.n}</span></div>`;
+const body=id=="me"?(pl.me?"🧑‍🔧<br>Equipado":lb):o?o.m||o.n:lb;
+return `<div class="sl ${installed||id=="me"&&pl.me?"f":""} ${stateClass}">${body}</div>`;
+}
+function R(){
+if(!started){document.querySelector('#g').innerHTML=`<section class="intro"><h1>Monte seu quadro, passo a passo</h1><p>Aprenda com desafios interativos: segurança, disjuntor geral, DPS, DR, circuitos, cabos e identificação dos condutores.</p><div class="note"><strong>Importante:</strong> os valores de corrente admissível, demanda e seleção de proteção são hipóteses didáticas. Uma instalação real exige avaliação do método de instalação, temperatura, agrupamento, queda de tensão, curto-circuito, esquema de aterramento e normas aplicáveis.</div><p>🎯 Responda, receba explicações e acompanhe o quadro ganhar vida.</p><button class="go" onclick="started=true;R()">Iniciar treinamento →</button></section>`;return}
+if(s>=S.length){const e=errs<=3?3:errs<=8?2:1;$("#g").innerHTML=`<div class="top"><div class="q"><span>🏆</span><div>Treinamento concluído!</div></div></div><div class="house ${trip?"off":""}">${CI.map(c=>`<span>${c.ic}</span>`).join("")}</div><div class="card"><h2>${"⭐".repeat(e)} ${pts} pontos</h2><p>Você terminou com ${errs} erro(s).</p><ul><li>I = P ÷ V.</li><li>Critério simplificado: Ib ≤ In ≤ Iz; confira também os demais requisitos de proteção.</li><li>A disposição e a ligação dos dispositivos dependem do projeto e do esquema de aterramento.</li><li>Mínimos: 1,5 mm² (iluminação) e 2,5 mm² (tomadas).</li><li>Azul-claro é neutro, verde-amarelo é terra.</li></ul><button class="go" onclick="rs()">Jogar de novo</button></div>`;return}
+const st=S[s],n=st.o.length;
+let h=`<div class="top"><div class="bar"><i style="width:${s/S.length*100}%"></i></div><div class="st"><span>Passo ${s+1} de ${S.length}</span><span>${combo>1?"🔥 x"+combo+" · ":""}${pts} pts</span></div><div class="q"><span>👷</span><div>${st.q}</div></div>${fb?`<div class="fb ${fb.k}">${fb.t}</div>`:""}</div>`;
+h+=`<div class="pn ${bad?"bad":""}"><div class="rail">${sl("s0","Geral")}${sl("s1","DPS")}${sl("s2","IDR")}${sl("me","Você")}</div><div class="rail">${CI.map((c,i)=>`<div class="col">${sl("b"+i,"Disj.")}${sl("w"+i,"Fio")}<p class="lb">${c.s}</p></div>`).join("")}</div><div class="bars">${[["N","Neutro"],["PE","Terra"],["F","Fase"]].map(x=>sl(x[0],x[1])).join("")}</div></div>`;
+if(lit)h+=`<div class="house ${trip?"off":"lit"}">${CI.map(c=>`<span>${c.ic}</span>`).join("")}</div>`;
+if(done)h+=`<button class="go" onclick="nx()">Continuar</button>`;
+else h+=`<div class="bench ${n==1?"one":""}">${st.o.map((o,i)=>`<button class="cd ${o.g?"g":o.b?"b":""}" ${o.x?"disabled":""} onclick="pick(${i})"><span class="ic">${o.ic}</span>${o.n}</button>`).join("")}</div>`;
+$("#g").innerHTML=h}
+R();
+</script></body></html>
